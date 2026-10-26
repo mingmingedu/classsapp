@@ -40,16 +40,37 @@
   </script>
 
   <style>
-    /* 귀여운 스크롤바 & 배경 패턴 */
+    /* 기본 폰트 설정 */
     body {
       font-family: 'Gowun Dodum', sans-serif;
-      background-color: #FAF8F5;
-      background-image: 
-        radial-gradient(#EADFD5 1.5px, transparent 1.5px),
-        radial-gradient(#EADFD5 1.5px, #FAF8F5 1.5px);
-      background-size: 40px 40px;
-      background-position: 0 0, 20px 20px;
       min-height: 100vh;
+      position: relative;
+    }
+
+    /* 화면 전체를 채우는 배경 이미지와 반투명 흰색 오버레이 */
+    .background-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-image: url('bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #FAF8F5; /* 이미지가 로딩되기 전 기본 배경색 */
+    }
+
+    /* 카드와 글씨가 돋보이도록 덮어주는 연한 흰색 반투명 막 */
+    .background-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.72);
+      backdrop-filter: blur(1.5px); /* 배경 사진을 살짝 부드럽게 처리 */
     }
 
     /* 통통 튀는 카드 인터랙션 애니메이션 */
@@ -72,7 +93,7 @@
       animation: floatSlow 3.5s ease-in-out infinite;
     }
 
-    /* 웹킷 탭 하이라이트 제거 (모바일/태블릿 터치 최적화) */
+    /* 모바일 터치 하이라이트 잔상 제거 */
     * {
       -webkit-tap-highlight-color: transparent;
     }
@@ -82,18 +103,25 @@
 <body class="text-slate-700 flex flex-col justify-between selection:bg-pink-200">
 
   <!-- ========================================== -->
-  <!-- 1. 헤더 영역 (제목, 환영 문구, 귀여운 장식) -->
+  <!-- 고정 배경 레이어 (bg.jpg + 흰색 반투명 오버레이) -->
+  <!-- ========================================== -->
+  <div class="background-container" aria-hidden="true">
+    <div class="background-overlay"></div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 1. 헤더 영역 (제목, 환영 문구, 장식)        -->
   <!-- ========================================== -->
   <header class="pt-8 pb-4 px-4 sm:px-6 max-w-6xl mx-auto w-full text-center relative">
     
-    <!-- 장식용 부유 아이콘들 (태블릿 이상에서 표시) -->
+    <!-- 장식용 부유 아이콘들 (태블릿/PC 화면에서 표시) -->
     <div class="hidden sm:block absolute left-8 top-10 text-4xl animate-float opacity-80 select-none">🎈</div>
     <div class="hidden sm:block absolute right-10 top-12 text-4xl animate-float opacity-80 select-none" style="animation-delay: 1.5s;">⭐</div>
     <div class="hidden sm:block absolute left-24 bottom-2 text-3xl animate-float opacity-70 select-none" style="animation-delay: 0.8s;">🌱</div>
     <div class="hidden sm:block absolute right-24 bottom-4 text-3xl animate-float opacity-70 select-none" style="animation-delay: 2.2s;">🎨</div>
 
     <!-- 타이틀 배지 -->
-    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100/80 border border-amber-200 text-amber-800 text-sm sm:text-base font-bold shadow-sm mb-3">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 border border-amber-300 text-amber-900 text-sm sm:text-base font-bold shadow-sm mb-3 backdrop-blur-sm">
       <span>✨</span>
       <span>매일매일 재미있는 디지털 배움터</span>
       <span>✨</span>
@@ -103,11 +131,11 @@
     <h1 class="font-jua text-4xl sm:text-5xl md:text-6xl text-slate-800 tracking-wide drop-shadow-sm flex items-center justify-center gap-3">
       <span>🏫</span> 우리 반 앱 진열장
     </h1>
-    <p class="text-slate-500 mt-2.5 text-base sm:text-lg max-w-lg mx-auto">
+    <p class="text-slate-600 mt-2.5 text-base sm:text-lg max-w-lg mx-auto font-medium">
       오늘 사용할 수업 도구를 찾아 카드를 쏙 눌러보세요!
     </p>
 
-    <!-- 검색창 및 빠른 필터 영역 -->
+    <!-- 검색창 및 태그 필터 영역 -->
     <div class="mt-6 max-w-xl mx-auto flex flex-col items-center gap-3">
       <!-- 검색 입력창 -->
       <div class="relative w-full">
@@ -115,7 +143,7 @@
           type="text"
           id="searchInput"
           placeholder="🔍 앱 이름이나 태그로 검색..."
-          class="w-full pl-5 pr-12 py-3.5 bg-white/90 backdrop-blur-sm rounded-2xl border-2 border-slate-200 focus:border-amber-400 focus:outline-none shadow-sm text-base text-slate-700 placeholder:text-slate-400 transition-all font-medium"
+          class="w-full pl-5 pr-12 py-3.5 bg-white/95 backdrop-blur-sm rounded-2xl border-2 border-slate-200 focus:border-amber-400 focus:outline-none shadow-sm text-base text-slate-700 placeholder:text-slate-400 transition-all font-medium"
         />
         <button 
           id="clearSearchBtn" 
@@ -145,24 +173,24 @@
       <!-- 자바스크립트가 appList 배열을 읽어 카드를 자동으로 렌더링합니다 -->
     </div>
 
-    <!-- 검색 결과 없을 때 표시되는 박스 -->
-    <div id="emptyState" class="hidden text-center py-16 px-4">
+    <!-- 검색 결과가 없을 때 표시되는 박스 -->
+    <div id="emptyState" class="hidden text-center py-16 px-4 bg-white/70 backdrop-blur-sm rounded-3xl border border-slate-200/80 shadow-sm max-w-md mx-auto mt-6">
       <div class="text-6xl mb-3 animate-bounce">🐰</div>
       <h3 class="font-jua text-2xl text-slate-600 mb-1">찾으시는 앱이 없어요!</h3>
-      <p class="text-slate-400 text-sm">검색어 철자를 확인하거나 다른 태그를 눌러보세요.</p>
+      <p class="text-slate-500 text-sm">검색어 철자를 확인하거나 다른 태그를 눌러보세요.</p>
     </div>
   </main>
 
   <!-- ========================================== -->
   <!-- 3. 하단 푸터 (안내 및 정보)               -->
   <!-- ========================================== -->
-  <footer class="mt-12 py-6 px-4 border-t border-slate-200/80 bg-white/60 backdrop-blur-sm text-center text-xs sm:text-sm text-slate-400">
+  <footer class="mt-12 py-6 px-4 border-t border-slate-200/60 bg-white/75 backdrop-blur-md text-center text-xs sm:text-sm text-slate-500 font-medium">
     <div class="max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2">
       <span>🎒 우리들의 행복한 교실</span>
       <span class="hidden sm:inline">•</span>
       <span>모든 앱은 새 창(새 탭)으로 안전하게 열려요</span>
       <span class="hidden sm:inline">•</span>
-      <span id="appCountText" class="font-semibold text-amber-600">0개의 앱</span>
+      <span id="appCountText" class="font-semibold text-amber-700">3개의 앱</span>
     </div>
   </footer>
 
@@ -201,56 +229,50 @@
     ];
 
     /* ====================================================================
-     * 디자인 테마 팔레트 (카드마다 부드럽고 산뜻한 파스텔 색상이 순환 적용됩니다)
+     * 디자인 테마 팔레트 (반투명 배경 위에서도 화사하게 돋보이는 파스텔 색상)
      * ==================================================================== */
     const CARD_THEMES = [
       {
-        bg: "bg-[#FEFCE8]",        // 연한 레몬
+        bg: "bg-[#FEFCE8]/95",        // 연한 레몬
         border: "border-amber-200",
         badgeBg: "bg-amber-100",
         badgeText: "text-amber-800",
         iconBg: "bg-amber-100/90",
-        btnHover: "hover:bg-amber-200/50"
       },
       {
-        bg: "bg-[#F0FDF4]",        // 연한 민트
+        bg: "bg-[#F0FDF4]/95",        // 연한 민트
         border: "border-emerald-200",
         badgeBg: "bg-emerald-100",
         badgeText: "text-emerald-800",
         iconBg: "bg-emerald-100/90",
-        btnHover: "hover:bg-emerald-200/50"
       },
       {
-        bg: "bg-[#FDF2F8]",        // 연한 벚꽃분홍
+        bg: "bg-[#FDF2F8]/95",        // 연한 벚꽃분홍
         border: "border-pink-200",
         badgeBg: "bg-pink-100",
         badgeText: "text-pink-800",
         iconBg: "bg-pink-100/90",
-        btnHover: "hover:bg-pink-200/50"
       },
       {
-        bg: "bg-[#F0F9FF]",        // 연한 하늘
+        bg: "bg-[#F0F9FF]/95",        // 연한 하늘
         border: "border-sky-200",
         badgeBg: "bg-sky-100",
         badgeText: "text-sky-800",
         iconBg: "bg-sky-100/90",
-        btnHover: "hover:bg-sky-200/50"
       },
       {
-        bg: "bg-[#FAF5FF]",        // 연한 라벤더
+        bg: "bg-[#FAF5FF]/95",        // 연한 라벤더
         border: "border-purple-200",
         badgeBg: "bg-purple-100",
         badgeText: "text-purple-800",
         iconBg: "bg-purple-100/90",
-        btnHover: "hover:bg-purple-200/50"
       },
       {
-        bg: "bg-[#FFF7ED]",        // 연한 살구
+        bg: "bg-[#FFF7ED]/95",        // 연한 살구
         border: "border-orange-200",
         badgeBg: "bg-orange-100",
         badgeText: "text-orange-800",
         iconBg: "bg-orange-100/90",
-        btnHover: "hover:bg-orange-200/50"
       }
     ];
 
@@ -328,18 +350,18 @@
       filteredApps.forEach((app, index) => {
         const theme = CARD_THEMES[index % CARD_THEMES.length];
 
-        // <a> 링크 태그를 카드 루트로 설정하여 새 탭으로 안정적으로 이동
+        // <a> 링크 태그를 카드 루트로 설정하여 새 탭으로 이동
         const cardLink = document.createElement("a");
         cardLink.href = app.url;
         cardLink.target = "_blank";
         cardLink.rel = "noopener noreferrer";
         cardLink.className = `
-          app-card group block p-5 rounded-3xl border-2 ${theme.border} ${theme.bg}
+          app-card group block p-5 rounded-3xl border-2 ${theme.border} ${theme.bg} backdrop-blur-sm
           shadow-bouncy hover:shadow-bouncy-hover cursor-pointer relative overflow-hidden
           flex flex-col justify-between select-none
         `;
 
-        // 카드 클릭 시 사운드 재생
+        // 카드 클릭 시 퐁 소리 재생
         cardLink.addEventListener("click", () => {
           playPopSound();
         });
@@ -360,7 +382,7 @@
             <h2 class="font-jua text-2xl text-slate-800 tracking-wide mb-1 group-hover:text-amber-700 transition-colors">
               ${escapeHtml(app.title)}
             </h2>
-            <p class="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">
+            <p class="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed line-clamp-2">
               ${escapeHtml(app.desc || "수업 활동을 위해 접속해보세요!")}
             </p>
           </div>
@@ -368,7 +390,7 @@
           <!-- 하단: 바로가기 버튼 안내 바 -->
           <div class="mt-5 pt-3 border-t border-black/5 flex items-center justify-between text-xs font-bold text-slate-600 group-hover:text-slate-900 transition-colors">
             <span>바로 열기</span>
-            <span class="w-7 h-7 rounded-full bg-white/80 flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
+            <span class="w-7 h-7 rounded-full bg-white/90 flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
               🚀
             </span>
           </div>
@@ -391,10 +413,10 @@
         const isActive = tag === currentSelectedTag;
 
         btn.className = `
-          px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200
+          px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 backdrop-blur-sm
           ${isActive 
             ? "bg-amber-400 text-amber-950 shadow-md scale-105 border-2 border-amber-500/30" 
-            : "bg-white/90 text-slate-600 hover:bg-amber-50 border border-slate-200"}
+            : "bg-white/80 text-slate-700 hover:bg-amber-100/80 border border-slate-200"}
         `;
         btn.innerText = tag === "전체" ? "🌈 전체" : `#${tag}`;
 
