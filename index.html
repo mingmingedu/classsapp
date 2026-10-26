@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏫 우리 반 앱 진열장</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- 귀여운 한글 폰트 (Jua & Gowun Dodum) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            jua: ['"Jua"', 'cursive', 'sans-serif'],
+            gowun: ['"Gowun Dodum"', 'sans-serif'],
+          },
+          colors: {
+            cream: '#FFFDF9',
+            pastelYellow: '#FEF9C3',
+            pastelMint: '#D1FAE5',
+            pastelPink: '#FCE7F3',
+            pastelBlue: '#E0F2FE',
+            pastelPurple: '#EDE9FE',
+            pastelOrange: '#FFEDD5',
+          },
+          boxShadow: {
+            'bouncy': '0 10px 25px -5px rgba(180, 160, 210, 0.25), 0 8px 10px -6px rgba(180, 160, 210, 0.2)',
+            'bouncy-hover': '0 20px 30px -10px rgba(160, 140, 200, 0.35), 0 10px 15px -5px rgba(160, 140, 200, 0.25)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 귀여운 스크롤바 & 배경 패턴 */
+    body {
+      font-family: 'Gowun Dodum', sans-serif;
+      background-color: #FAF8F5;
+      background-image: 
+        radial-gradient(#EADFD5 1.5px, transparent 1.5px),
+        radial-gradient(#EADFD5 1.5px, #FAF8F5 1.5px);
+      background-size: 40px 40px;
+      background-position: 0 0, 20px 20px;
+      min-height: 100vh;
+    }
+
+    /* 통통 튀는 카드 인터랙션 애니메이션 */
+    .app-card {
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .app-card:hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+    .app-card:active {
+      transform: translateY(2px) scale(0.97);
+    }
+
+    /* 둥실둥실 떠다니는 장식 아이콘 애니메이션 */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(3deg); }
+    }
+    .animate-float {
+      animation: floatSlow 3.5s ease-in-out infinite;
+    }
+
+    /* 웹킷 탭 하이라이트 제거 (모바일 터치 시 깔끔함 유지) */
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+
+<body class="text-slate-700 flex flex-col justify-between selection:bg-pink-200">
+
+  <!-- ========================================== -->
+  <!-- 1. 헤더 영역 (제목, 환영 문구, 귀여운 장식) -->
+  <!-- ========================================== -->
+  <header class="pt-8 pb-4 px-4 sm:px-6 max-w-6xl mx-auto w-full text-center relative">
+    
+    <!-- 장식용 부유 아이콘들 (태블릿 이상에서 표시) -->
+    <div class="hidden sm:block absolute left-8 top-10 text-4xl animate-float opacity-80 select-none">🎈</div>
+    <div class="hidden sm:block absolute right-10 top-12 text-4xl animate-float opacity-80 select-none" style="animation-delay: 1.5s;">⭐</div>
+    <div class="hidden sm:block absolute left-24 bottom-2 text-3xl animate-float opacity-70 select-none" style="animation-delay: 0.8s;">🌱</div>
+    <div class="hidden sm:block absolute right-24 bottom-4 text-3xl animate-float opacity-70 select-none" style="animation-delay: 2.2s;">🎨</div>
+
+    <!-- 타이틀 배지 -->
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100/80 border border-amber-200 text-amber-800 text-sm sm:text-base font-bold shadow-sm mb-3">
+      <span>✨</span>
+      <span>매일매일 재미있는 디지털 배움터</span>
+      <span>✨</span>
+    </div>
+
+    <!-- 메인 타이틀 -->
+    <h1 class="font-jua text-4xl sm:text-5xl md:text-6xl text-slate-800 tracking-wide drop-shadow-sm flex items-center justify-center gap-3">
+      <span>🏫</span> 우리 반 앱 진열장
+    </h1>
+    <p class="text-slate-500 mt-2.5 text-base sm:text-lg max-w-lg mx-auto">
+      오늘 사용할 수업 도구를 찾아 카드를 쏙 눌러보세요!
+    </p>
+
+    <!-- 검색창 및 빠른 필터 영역 -->
+    <div class="mt-6 max-w-xl mx-auto flex flex-col items-center gap-3">
+      <!-- 검색 입력창 -->
+      <div class="relative w-full">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="🔍 앱 이름이나 태그(예: 퀴즈, 미술, 국어)로 검색..."
+          class="w-full pl-5 pr-12 py-3.5 bg-white/90 backdrop-blur-sm rounded-2xl border-2 border-slate-200 focus:border-amber-400 focus:outline-none shadow-sm text-base text-slate-700 placeholder:text-slate-400 transition-all font-medium"
+        />
+        <button 
+          id="clearSearchBtn" 
+          class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 items-center justify-center text-xs transition"
+          title="검색어 지우기"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- 카테고리 태그 알약 버튼 바 -->
+      <div id="tagFilterContainer" class="flex flex-wrap items-center justify-center gap-2 pt-1 text-sm">
+        <!-- 자바스크립트로 태그 버튼 자동 생성 -->
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- 2. 메인 컨텐츠 영역 (앱 카드 그리드)       -->
+  <!-- ========================================== -->
+  <main class="flex-grow max-w-6xl mx-auto w-full px-4 sm:px-6 py-6">
+    <!-- 앱 카드들이 꽂힐 반응형 그리드 -->
+    <div 
+      id="cardsGrid" 
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6"
+    >
+      <!-- 자바스크립트가 appList 배열을 읽어 카드를 자동으로 렌더링합니다 -->
+    </div>
+
+    <!-- 검색 결과 없을 때 표시되는 귀여운 박스 -->
+    <div id="emptyState" class="hidden text-center py-16 px-4">
+      <div class="text-6xl mb-3 animate-bounce">🐰</div>
+      <h3 class="font-jua text-2xl text-slate-600 mb-1">찾으시는 앱이 없어요!</h3>
+      <p class="text-slate-400 text-sm">검색어 철자를 확인하거나 다른 태그를 눌러보세요.</p>
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- 3. 하단 푸터 (안내 및 정보)               -->
+  <!-- ========================================== -->
+  <footer class="mt-12 py-6 px-4 border-t border-slate-200/80 bg-white/60 backdrop-blur-sm text-center text-xs sm:text-sm text-slate-400">
+    <div class="max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2">
+      <span>🎒 우리들의 행복한 교실</span>
+      <span class="hidden sm:inline">•</span>
+      <span>모든 앱은 새 창(새 탭)으로 안전하게 열려요</span>
+      <span class="hidden sm:inline">•</span>
+      <span id="appCountText" class="font-semibold text-amber-600">0개의 앱</span>
+    </div>
+  </footer>
+
+  <!-- =============================================================== -->
+  <!-- 4. 자바스크립트 로직 (앱 데이터 관리 및 렌더링)               -->
+  <!-- =============================================================== -->
+  <script>
+    /* ====================================================================
+     * [교사용 안내] ✏️ 새로운 앱을 추가하려면?
+     * 아래 appList 배열 안에 한 줄을 복사하여 제목, 설명, 링크, 이모지, 태그만 바꿔주세요!
+     * 쉼표(,)를 잊지 마세요!
+     * ==================================================================== */
+    const appList = [
+      {
+        title: "띵커벨",
+        desc: "신나는 수업 퀴즈와 게임 배틀!",
+        url: "https://www.tkbell.co.kr",
+        emoji: "🔔",
+        tag: "퀴즈/게임"
+      },
+      {
+        title: "패들렛",
+        desc: "우리 반 생각과 작품을 나누는 담벼락",
+        url: "https://padlet.com",
+        emoji: "📌",
+        tag: "게시판"
+      },
+      {
+        title: "캔바",
+        desc: "포스터, 발표자료, 카드뉴스 만들기",
+        url: "https://www.canva.com",
+        emoji: "🎨",
+        tag: "미술/창작"
+      },
+      {
+        title: "클래스툴",
+        desc: "실시간 투표와 수업 타이머 도구",
+        url: "https://classtool.co.kr",
+        emoji: "✏️",
+        tag: "수업참여"
+      },
+      {
+        title: "엔트리",
+        desc: "블록을 조립하며 배우는 코딩 놀이터",
+        url: "https://playentry.org",
+        emoji: "🤖",
+        tag: "코딩/실과"
+      },
+      {
+        title: "EBS 만점왕",
+        desc: "스스로 예습하고 복습하는 영상 배움터",
+        url: "https://primary.ebs.co.kr",
+        emoji: "📺",
+        tag: "스스로학습"
+      },
+      {
+        title: "디지털 교과서",
+        desc: "태블릿으로 보는 우리 반 전자 교과서",
+        url: "https://webdt.edunet.net",
+        emoji: "📖",
+        tag: "교과서"
+      },
+      {
+        title: "퀴즐렛",
+        desc: "단어 카드 짝맞추기와 낱말 기억하기",
+        url: "https://quizlet.com",
+        emoji: "🃏",
+        tag: "어휘/학습"
+      },
+      {
+        title: "멘티미터",
+        desc: "우리 반의 마음과 의견을 한눈에 모아요",
+        url: "https://www.mentimeter.com",
+        emoji: "📊",
+        tag: "수업참여"
+      },
+      {
+        title: "구글 클래스룸",
+        desc: "오늘의 과제를 확인하고 제출해요",
+        url: "https://classroom.google.com",
+        emoji: "📁",
+        tag: "과제"
+      }
+      // 👇 여기에 새 앱을 추가하실 때는 아래 형태를 복사해 붙여넣으세요:
+      // { title: "새로운 앱", desc: "앱 설명 한 줄", url: "https://...", emoji: "🌟", tag: "기타" },
+    ];
+
+    /* ====================================================================
+     * 디자인 테마 팔레트 (카드마다 부드럽고 산뜻한 파스텔 색상이 순환 적용됩니다)
+     * ==================================================================== */
+    const CARD_THEMES = [
+      {
+        bg: "bg-[#FEFCE8]",        // 연한 레몬
+        border: "border-amber-200",
+        badgeBg: "bg-amber-100",
+        badgeText: "text-amber-800",
+        iconBg: "bg-amber-100/90",
+        btnHover: "hover:bg-amber-200/50"
+      },
+      {
+        bg: "bg-[#F0FDF4]",        // 연한 민트
+        border: "border-emerald-200",
+        badgeBg: "bg-emerald-100",
+        badgeText: "text-emerald-800",
+        iconBg: "bg-emerald-100/90",
+        btnHover: "hover:bg-emerald-200/50"
+      },
+      {
+        bg: "bg-[#FDF2F8]",        // 연한 벚꽃분홍
+        border: "border-pink-200",
+        badgeBg: "bg-pink-100",
+        badgeText: "text-pink-800",
+        iconBg: "bg-pink-100/90",
+        btnHover: "hover:bg-pink-200/50"
+      },
+      {
+        bg: "bg-[#F0F9FF]",        // 연한 하늘
+        border: "border-sky-200",
+        badgeBg: "bg-sky-100",
+        badgeText: "text-sky-800",
+        iconBg: "bg-sky-100/90",
+        btnHover: "hover:bg-sky-200/50"
+      },
+      {
+        bg: "bg-[#FAF5FF]",        // 연한 라벤더
+        border: "border-purple-200",
+        badgeBg: "bg-purple-100",
+        badgeText: "text-purple-800",
+        iconBg: "bg-purple-100/90",
+        btnHover: "hover:bg-purple-200/50"
+      },
+      {
+        bg: "bg-[#FFF7ED]",        // 연한 살구
+        border: "border-orange-200",
+        badgeBg: "bg-orange-100",
+        badgeText: "text-orange-800",
+        iconBg: "bg-orange-100/90",
+        btnHover: "hover:bg-orange-200/50"
+      }
+    ];
+
+    /* ====================================================================
+     * 상태 관리 및 DOM 요소
+     * ==================================================================== */
+    let currentSelectedTag = "전체";
+    let searchKeyword = "";
+
+    const cardsGrid = document.getElementById("cardsGrid");
+    const emptyState = document.getElementById("emptyState");
+    const searchInput = document.getElementById("searchInput");
+    const clearSearchBtn = document.getElementById("clearSearchBtn");
+    const tagFilterContainer = document.getElementById("tagFilterContainer");
+    const appCountText = document.getElementById("appCountText");
+
+    /* ====================================================================
+     * 톡 터지는 작은 사운드 효과 (Web Audio API - 무외부 파일)
+     * ==================================================================== */
+    function playPopSound() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sine";
+        // 주파수를 빠르게 올려 귀여운 물방울 '퐁!' 소리 생성
+        osc.frequency.setValueAtTime(450, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+      } catch (e) {
+        // 사운드 재생 불가 환경에서도 오류 없이 조용히 무시
+      }
+    }
+
+    /* ====================================================================
+     * 카드 렌더링 함수
+     * ==================================================================== */
+    function renderCards() {
+      // 필터링 적용 (태그 & 검색어)
+      const filteredApps = appList.filter(app => {
+        const matchesTag = currentSelectedTag === "전체" || app.tag === currentSelectedTag;
+        const normalizedKeyword = searchKeyword.trim().toLowerCase();
+        const matchesSearch = !normalizedKeyword || 
+          app.title.toLowerCase().includes(normalizedKeyword) ||
+          app.desc.toLowerCase().includes(normalizedKeyword) ||
+          (app.tag && app.tag.toLowerCase().includes(normalizedKeyword));
+        
+        return matchesTag && matchesSearch;
+      });
+
+      // 카드 카운터 갱신
+      appCountText.innerText = `총 ${appList.length}개 중 ${filteredApps.length}개 표시 중`;
+
+      // 그리드 초기화
+      cardsGrid.innerHTML = "";
+
+      if (filteredApps.length === 0) {
+        emptyState.classList.remove("hidden");
+        return;
+      } else {
+        emptyState.classList.add("hidden");
+      }
+
+      // 카드 동적 생성
+      filteredApps.forEach((app, index) => {
+        const theme = CARD_THEMES[index % CARD_THEMES.length];
+
+        // <a> 링크 태그를 카드 루트로 설정하여 새 탭으로 안정적으로 이동
+        const cardLink = document.createElement("a");
+        cardLink.href = app.url;
+        cardLink.target = "_blank";
+        cardLink.rel = "noopener noreferrer";
+        cardLink.className = `
+          app-card group block p-5 rounded-3xl border-2 ${theme.border} ${theme.bg}
+          shadow-bouncy hover:shadow-bouncy-hover cursor-pointer relative overflow-hidden
+          flex flex-col justify-between select-none
+        `;
+
+        // 카드 클릭 시 귀여운 사운드 재생
+        cardLink.addEventListener("click", () => {
+          playPopSound();
+        });
+
+        cardLink.innerHTML = `
+          <div>
+            <!-- 상단: 이모지 아이콘 & 태그 배지 -->
+            <div class="flex items-center justify-between gap-2 mb-4">
+              <div class="w-14 h-14 rounded-2xl ${theme.iconBg} flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform duration-300">
+                ${app.emoji || "✨"}
+              </div>
+              <span class="text-xs font-bold px-3 py-1 rounded-full ${theme.badgeBg} ${theme.badgeText} tracking-tight">
+                ${app.tag || "수업"}
+              </span>
+            </div>
+
+            <!-- 중단: 앱 제목과 설명 -->
+            <h2 class="font-jua text-2xl text-slate-800 tracking-wide mb-1 group-hover:text-amber-700 transition-colors">
+              ${escapeHtml(app.title)}
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 font-medium leading-relaxed line-clamp-2">
+              ${escapeHtml(app.desc || "수업 활동을 위해 접속해보세요!")}
+            </p>
+          </div>
+
+          <!-- 하단: 바로가기 버튼 안내 바 -->
+          <div class="mt-5 pt-3 border-t border-black/5 flex items-center justify-between text-xs font-bold text-slate-600 group-hover:text-slate-900 transition-colors">
+            <span>바로 열기</span>
+            <span class="w-7 h-7 rounded-full bg-white/80 flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
+              🚀
+            </span>
+          </div>
+        `;
+
+        cardsGrid.appendChild(cardLink);
+      });
+    }
+
+    /* ====================================================================
+     * 태그 필터 버튼 자동 생성 함수
+     * ==================================================================== */
+    function renderTagFilters() {
+      // appList에 등록된 태그 중복 제거 추출
+      const allTags = ["전체", ...new Set(appList.map(app => app.tag).filter(Boolean))];
+
+      tagFilterContainer.innerHTML = "";
+
+      allTags.forEach(tag => {
+        const btn = document.createElement("button");
+        const isActive = tag === currentSelectedTag;
+
+        btn.className = `
+          px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200
+          ${isActive 
+            ? "bg-amber-400 text-amber-950 shadow-md scale-105 border-2 border-amber-500/30" 
+            : "bg-white/90 text-slate-600 hover:bg-amber-50 border border-slate-200"}
+        `;
+        btn.innerText = tag === "전체" ? "🌈 전체" : `#${tag}`;
+
+        btn.addEventListener("click", () => {
+          playPopSound();
+          currentSelectedTag = tag;
+          renderTagFilters(); // 버튼 활성 스타일 갱신
+          renderCards();
+        });
+
+        tagFilterContainer.appendChild(btn);
+      });
+    }
+
+    /* ====================================================================
+     * 검색창 이벤트 리스너
+     * ==================================================================== */
+    searchInput.addEventListener("input", (e) => {
+      searchKeyword = e.target.value;
+      if (searchKeyword.length > 0) {
+        clearSearchBtn.classList.remove("hidden");
+        clearSearchBtn.classList.add("flex");
+      } else {
+        clearSearchBtn.classList.add("hidden");
+        clearSearchBtn.classList.remove("flex");
+      }
+      renderCards();
+    });
+
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      searchKeyword = "";
+      clearSearchBtn.classList.add("hidden");
+      clearSearchBtn.classList.remove("flex");
+      searchInput.focus();
+      renderCards();
+    });
+
+    /* HTML 문자열 이스케이프 (XSS 방지) */
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /* ====================================================================
+     * 페이지 로드 시 초기화 실행
+     * ==================================================================== */
+    window.addEventListener("DOMContentLoaded", () => {
+      renderTagFilters();
+      renderCards();
+    });
+  </script>
+</body>
+</html>
